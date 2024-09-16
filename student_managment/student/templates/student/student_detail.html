@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Student Detail</h1>
+<div class="card">
+    <img src="{{ student.profile_photo.url }}" alt="Photo"/>
+    <p><b>First name:</b> {{ student.first_name }} </p>
+    <p><b>Last Name </b>{{ student.last_name  }} </p>
+    <p><b>Age:</b> {{ student.age }}</p>
+    <p><b>Gender: </b> {{ student.gender }}</p>
+    <button><a class="back-link"  href="{% url 'student_update' student.id %}" class="submit-button">Update</a>
+        <button><a class="back-link"  href="{% url 'student_delete' student.id %}" class="submit-button">Delete</a>
+</button>
+</div>
+<a class="back-link"  href="{% url 'student_list' %}">Back to the list</a>
+{% endblock content %}
