@@ -1,31 +1,38 @@
-"""
-URL configuration for student_managment project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from account.views import home
-from student.views import HomeView,StudentListView,StudentCreateView,StudentDetailView,StudentUpdateView,StudentDeleteView
+from django.conf import settings
+from django.conf.urls.static import static
+from student.views import (
+    HomeView,StudentListView,StudentCreateView,
+    StudentDetailView,StudentUpdateView,StudentDeleteView,StudentViewSet)
+from account.views import CustomLoginView,SingUpView,CustomLogoutView,CustomUserViewSet
+from rest_framework import routers
+from rest_framework.routers import DefaultRouter
+
+
+# router=routers.SimpleRouter()
+# router.register('student',StudentViewSet,basename='student')
+router = DefaultRouter()
+router.register(r'students', StudentViewSet)
+router.register(r'users', CustomUserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('account/home', home.as_view(),name='home_account'),
+    path('account/home', home.as_view(),name='account_home'),
     path('student/home', HomeView.as_view(),name='home_student'),
     path('student/list', StudentListView.as_view(),name='student_list'),
     path('student/add', StudentCreateView.as_view(),name='student_add'),
     path('student/detail/<int:pk>', StudentDetailView.as_view(),name='student_detail'),
     path('student/update/<int:student_id>', StudentUpdateView.as_view(),name='student_update'),
     path('student/delete/<int:student_id>', StudentDeleteView.as_view(),name='student_delete'),
+    path('', CustomLoginView.as_view(),name='login'),
+    path('account/signup', SingUpView.as_view(),name='signup'),
+    path('logout/', CustomLogoutView.as_view(),name='logout'),
+
+    path('api/',include(router.urls)),
+    # path('api/student_list/', StudentViewSet.as_view({'get': 'list'}),name='student-list'),
 ]
+if settings.DEBUG:
+     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
